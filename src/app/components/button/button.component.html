@@ -1,0 +1,4 @@
+<button [disabled]="disabled" (click)="handleClick()" [class]="buttonClass">
+    <lucide-icon *ngIf="icon" [name]="icon" class="w-4 h-4"></lucide-icon>
+    <span *ngIf="label">{{ label }}</span>
+</button>

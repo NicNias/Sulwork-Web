@@ -1,0 +1,50 @@
+<main class="p-4 min-h-screen space-y-6 flex flex-col items-center">
+    <div class="flex justify-between items-center py-3 w-full">
+        <div class="flex justify-center items-center space-x-4">
+            <img src="/logo.png" alt="Logo" class="w-16 h-16 rounded-full object-cover">
+            <h1 class="text-3xl font-bold">Cadastro de Colaboradores</h1>
+        </div>
+
+        <app-button label="Lista de Colaboradores" icon="list-todo" color="green"
+            (click)="navigateToList()"></app-button>
+    </div>
+
+    <form [formGroup]="colaboradorForm" (ngSubmit)="onSubmit()"
+        class="space-y-4 w-[50rem] flex flex-col justify-center bg-gray-800 p-5 rounded-2xl">
+        <div class="flex flex-col gap-2 w-full justify-center">
+            <div>
+                <label class="block font-semibold">Nome</label>
+                <input type="text" formControlName="nome" class="w-full p-2 border rounded" />
+            </div>
+
+            <div>
+                <label class="block font-semibold">CPF</label>
+                <input type="text" formControlName="cpf" class="w-full p-2 border rounded" />
+            </div>
+
+            <div>
+                <label class="block font-semibold">Data do Café</label>
+                <input type="date" formControlName="data_cafe" class="w-full p-2 border rounded" />
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1">Itens</label>
+                <input type="text" formControlName="itens" placeholder="Digite os itens separados por vírgula"
+                    class="w-full p-2 border rounded" />
+            </div>
+        </div>
+
+
+        <div class="flex flex-col justify-center items-center w-full gap-y-2">
+            <div class="flex items-center justify-start space-x-2">
+                <input type="checkbox" formControlName="entregue" id="entregue" />
+                <label for="entregue" class="font-semibold">Entregue</label>
+            </div>
+
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-1/2"
+                [disabled]="colaboradorForm.invalid">
+                Cadastrar
+            </button>
+        </div>
+    </form>
+</main>

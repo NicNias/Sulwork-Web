@@ -1,3 +1,15 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { ListaComponent } from './pages/lista/lista.component';
+import { CadastroComponent } from './pages/cadastro/cadastro.component';
+
+export const routes: Routes = [
+    {
+        path: "",
+        component: ListaComponent
+    },
+    {
+        path: "cadastro",
+        component: CadastroComponent
+    }
+];
