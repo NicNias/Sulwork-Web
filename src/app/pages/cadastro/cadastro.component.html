@@ -19,7 +19,7 @@
 
             <div>
                 <label class="block font-semibold">CPF</label>
-                <input type="text" formControlName="cpf" class="w-full p-2 border rounded" />
+                <input type="text" formControlName="cpf" class="w-full p-2 border rounded" maxlength="11" />
             </div>
 
             <div>
@@ -32,17 +32,15 @@
                 <input type="text" formControlName="itens" placeholder="Digite os itens separados por vírgula"
                     class="w-full p-2 border rounded" />
             </div>
-        </div>
 
-
-        <div class="flex flex-col justify-center items-center w-full gap-y-2">
             <div class="flex items-center justify-start space-x-2">
                 <input type="checkbox" formControlName="entregue" id="entregue" />
                 <label for="entregue" class="font-semibold">Entregue</label>
             </div>
+        </div>
 
-            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-1/2"
-                [disabled]="colaboradorForm.invalid">
+        <div class="flex flex-col justify-center items-center w-full gap-y-2">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded w-1/2 cursor-pointer">
                 Cadastrar
             </button>
         </div>

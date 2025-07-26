@@ -26,19 +26,21 @@
                 <tr *ngFor="let pessoa of pessoasPaginadas">
                     <td class="px-6 py-4">{{ pessoa.nome }}</td>
                     <td class="px-6 py-4">{{ pessoa.cpf | cpfMask }}</td>
-                    <td class="px-6 py-4">{{ pessoa.dataCafe | dataFormat }}</td>
-                    <td class="px-6 py-4">{{ pessoa.opcoes }}</td>
+                    <td class="px-6 py-4">{{ pessoa.data_cafe | dataFormat }}</td>
+                    <td class="px-6 py-4">{{ pessoa.itens.join(', ') }}</td>
                     <td class="px-6 py-4">
-                        <span [ngClass]="{
+                        <span class="flex items-center gap-1" [ngClass]="{
                 'text-green-600 font-bold': pessoa.entregue,
                 'text-red-600 font-bold': !pessoa.entregue
               }">
                             {{ pessoa.entregue ? 'Entregue' : 'Não entregue' }}
+                            <lucide-icon name="edit" class="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-600"
+                                (click)="abrirModalEditarStatus(pessoa)"></lucide-icon>
                         </span>
                     </td>
                     <td class="px-6 py-4 flex gap-4">
                         <app-button icon="plus" color="green" (click)="abrirModalAdicionar(pessoa)"></app-button>
-                        <app-button icon="edit" color="gray"></app-button>
+                        <app-button icon="edit" color="gray" (click)="abrirModalEditarColaborador(pessoa)"></app-button>
                         <app-button icon="trash" color="red" (click)="abrirModal(pessoa)"></app-button>
                     </td>
                 </tr>
@@ -73,7 +75,62 @@
             class="w-full px-4 py-2 rounded-lg text-blue-500 outline-none border border-blue-400" />
         <div class="flex justify-end gap-3 pt-4">
             <app-button label="Adicionar" color="green" (click)="confirmarAdicao()"></app-button>
-            <app-button label="Cancelar" color="gray" (click)="fecharModalAdicionar()"></app-button>
+            <app-button label="Cancelar" color="red" (click)="fecharModalAdicionar()"></app-button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição do Status -->
+<div *ngIf="mostrarModalEditarStatus"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full space-y-4">
+        <h2 class="text-xl font-semibold text-gray-900">Editar Status</h2>
+
+        <p class="text-gray-700">
+            Alterar status de entrega do colaborador
+            <span class="font-bold text-blue-600">{{ colaboradorSelecionadoParaEdicao?.nome }}</span>
+        </p>
+
+        <select [(ngModel)]="colaboradorSelecionadoParaEdicao.entregue"
+            class="w-full px-3 py-2 border border-gray-400 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 text-gray-500">
+            <option [ngValue]="true">Entregue</option>
+            <option [ngValue]="false">Não Entregue</option>
+        </select>
+
+        <div class="flex justify-end gap-3 pt-4">
+            <app-button label="Salvar" color="green" (click)="salvarEditStatus()"></app-button>
+            <app-button label="Cancelar" color="red" (click)="fecharModalEditarStatus()"></app-button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição de Colaborador -->
+<div *ngIf="mostrarModalEditarColaborador"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full space-y-4">
+        <h2 class="text-xl font-semibold text-gray-900">Editar Colaborador</h2>
+
+        <div class="space-y-2">
+            <label class="block text-gray-700 font-semibold">Nome</label>
+            <input type="text" [(ngModel)]="colaboradorEmEdicao.nome"
+                class="w-full px-4 py-2 rounded-lg border border-gray-400 text-gray-700 outline-none" />
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-gray-700 font-semibold">CPF</label>
+            <input type="text" [(ngModel)]="colaboradorEmEdicao.cpf"
+                class="w-full px-4 py-2 rounded-lg border border-gray-400 text-gray-700 outline-none" />
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-gray-700 font-semibold">Data do Café</label>
+            <input type="date" [(ngModel)]="colaboradorEmEdicao.data_cafe"
+                class="w-full px-4 py-2 rounded-lg border border-gray-400 text-gray-700 outline-none" />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+            <app-button label="Salvar" color="green" (click)="salvarEdicaoColaborador()"></app-button>
+            <app-button label="Cancelar" color="red" (click)="fecharModalEditarColaborador()"></app-button>
         </div>
     </div>
 </div>

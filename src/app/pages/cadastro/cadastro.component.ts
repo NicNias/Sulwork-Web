@@ -3,7 +3,10 @@ import { ButtonComponent } from '../../components/button/button.component';
 import { Router } from '@angular/router';
 import { SharedModule } from '../../modules/shared.module';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import { SulworkService } from '../../services/sulwork.service'; // ajuste o caminho conforme seu projeto
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-cadastro',
@@ -19,7 +22,12 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } fr
 export class CadastroComponent implements OnInit {
   colaboradorForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private sulworkService: SulworkService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit() {
     this.colaboradorForm = this.fb.group({
@@ -32,19 +40,36 @@ export class CadastroComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.colaboradorForm.valid) {
-      const formValue = this.colaboradorForm.value;
-
-      const payload = {
-        nome: formValue.nome,
-        cpf: formValue.cpf,
-        data_cafe: formValue.data_cafe,
-        entregue: formValue.entregue,
-        itens: formValue.itens, // string com itens separados por vírgula
-      };
-
-      console.log('Enviando payload:', payload);
+    if (this.colaboradorForm.invalid) {
+      this.colaboradorForm.markAllAsTouched();
+      return;
     }
+
+    const formValue = this.colaboradorForm.value;
+
+    const itensArray = formValue.itens
+      ? formValue.itens.split(',').map((item: string) => item.trim()).filter((item: string) => item.length > 0)
+      : [];
+
+    const payload = {
+      nome: formValue.nome,
+      cpf: formValue.cpf,
+      data_cafe: formValue.data_cafe,
+      entregue: formValue.entregue,
+      itens: itensArray,
+    };
+
+    this.sulworkService.createColaborador(payload).subscribe({
+      next: (response) => {
+        this.toastr.success(`Colaborador ${response.nome} cadastrado com sucesso!`);
+        setTimeout(() => {
+          this.navigateToList();
+        }, 1500);
+      },
+      error: (err) => {
+        console.error(err.error.title);
+      }
+    });
   }
 
   navigateToList() {

@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CpfMaskPipe } from '../../pipes/cpfMask/cpf-mask.pipe';
 import { DataFormatPipe } from '../../pipes/dataFormat/data-format.pipe';
 import { ButtonComponent } from '../../components/button/button.component';
 import { SharedModule } from '../../modules/shared.module';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SulworkService } from '../../services/sulwork.service'; // importa o serviço
+
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-lista',
+  standalone: true,
   imports: [
     CommonModule,
     CpfMaskPipe,
@@ -20,59 +24,34 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './lista.component.html',
   styleUrl: './lista.component.css'
 })
-export class ListaComponent {
+export class ListaComponent implements OnInit {
   constructor(
     private router: Router,
+    private sulworkService: SulworkService, // injeta o serviço
+    private toastr: ToastrService
   ) { }
+
+  pessoas: any[] = [];
+
+  // puxa colaboradores
+  private carregarColaboradores(): void {
+    this.sulworkService.getTodosColaboradores().subscribe({
+      next: (res) => {
+        this.pessoas = res;
+      },
+      error: (err) => {
+        this.toastr.error(err.error.title);
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.carregarColaboradores();
+  }
 
   navigateToCadastro() {
     this.router.navigate(['/cadastro']);
   }
-
-  pessoas = [
-    {
-      nome: 'João Silva',
-      cpf: '12345678900',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café preto',
-      entregue: true
-    },
-    {
-      nome: 'Maria Oliveira',
-      cpf: '98765432100',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café com leite',
-      entregue: false
-    },
-    {
-      nome: 'Carlos Mendes',
-      cpf: '11122233344',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café descafeinado',
-      entregue: false
-    },
-    {
-      nome: 'João Silva',
-      cpf: '12345678900',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café preto',
-      entregue: true
-    },
-    {
-      nome: 'Maria Oliveira',
-      cpf: '98765432100',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café com leite',
-      entregue: false
-    },
-    {
-      nome: 'Carlos Mendes',
-      cpf: '11122233344',
-      dataCafe: '2025-07-25',
-      opcoes: 'Café descafeinado',
-      entregue: false
-    },
-  ];
 
   // Paginação
   paginaAtual = 1;
@@ -105,6 +84,42 @@ export class ListaComponent {
     }
   }
 
+  // modal editar colaborador
+  mostrarModalEditarColaborador = false;
+  colaboradorEmEdicao: any = null;
+
+  abrirModalEditarColaborador(colaborador: any) {
+    this.colaboradorEmEdicao = { ...colaborador };
+    this.mostrarModalEditarColaborador = true;
+  }
+
+  fecharModalEditarColaborador() {
+    this.mostrarModalEditarColaborador = false;
+    this.colaboradorEmEdicao = null;
+  }
+
+  salvarEdicaoColaborador() {
+    if (!this.colaboradorEmEdicao?.id) return;
+
+    this.sulworkService.patchAtualizarColaborador(
+      this.colaboradorEmEdicao.id,
+      {
+        nome: this.colaboradorEmEdicao.nome,
+        cpf: this.colaboradorEmEdicao.cpf,
+        data_cafe: this.colaboradorEmEdicao.data_cafe,
+        itens: this.colaboradorEmEdicao.itens
+      }
+    ).subscribe({
+      next: () => {
+        this.carregarColaboradores();
+        this.fecharModalEditarColaborador();
+      },
+      error: (err) => {
+        console.error('Erro ao editar colaborador', err);
+      }
+    });
+  }
+
   // modal add itens
   mostrarModalAdicionar: boolean = false;
   colaboradorSelecionado: any = null;
@@ -123,15 +138,69 @@ export class ListaComponent {
   }
 
   confirmarAdicao() {
-    if (this.novoItem.trim()) {
-      if (!this.colaboradorSelecionado.opcoes) {
-        this.colaboradorSelecionado.opcoes = this.novoItem;
-      } else {
-        this.colaboradorSelecionado.opcoes += `, ${this.novoItem}`;
-      }
+    const novoItemTrim = this.novoItem.trim();
+    if (!novoItemTrim) {
+      this.toastr.warning('Informe um item para adicionar.');
+      return;
     }
 
-    this.fecharModalAdicionar();
+    if (!this.colaboradorSelecionado) {
+      this.toastr.error('Nenhum colaborador selecionado.');
+      return;
+    }
+
+    this.sulworkService.patchAdicionarItens(this.colaboradorSelecionado.id, [novoItemTrim]).subscribe({
+      next: (colaboradorAtualizado) => {
+        const index = this.pessoas.findIndex(p => p.id === this.colaboradorSelecionado.id);
+        if (index !== -1) {
+          this.pessoas[index] = colaboradorAtualizado;
+        }
+
+        this.toastr.success('Item adicionado com sucesso!');
+        this.fecharModalAdicionar();
+      },
+      error: (err) => {
+        const mensagemErro = err?.error?.mensagem || err?.error?.title || 'Erro ao adicionar item.';
+        this.toastr.error(mensagemErro);
+        console.error(err);
+      }
+    });
+  }
+
+  // modal editar status
+  mostrarModalEditarStatus = false;
+  colaboradorSelecionadoParaEdicao: any = null;
+
+  abrirModalEditarStatus(pessoa: any) {
+    this.colaboradorSelecionadoParaEdicao = { ...pessoa };
+    this.mostrarModalEditarStatus = true;
+  }
+
+  fecharModalEditarStatus() {
+    this.mostrarModalEditarStatus = false;
+    this.colaboradorSelecionadoParaEdicao = null;
+  }
+
+  // atualizar status
+  salvarEditStatus() {
+    const { id, entregue } = this.colaboradorSelecionadoParaEdicao;
+
+    this.sulworkService.patchStatusCafe(id, entregue).subscribe({
+      next: response => {
+        const index = this.pessoas.findIndex(p => p.id === id);
+        if (index !== -1) {
+          this.pessoas[index].entregue = entregue;
+        }
+
+        this.toastr.success(response);
+        this.fecharModalEditarStatus();
+      },
+      error: (err) => {
+        const mensagemErro = err?.error?.mensagem || err?.error?.title || 'Erro ao atualizar status.';
+        this.toastr.error(mensagemErro);
+        console.error(err);
+      }
+    });
   }
 
 
@@ -150,8 +219,19 @@ export class ListaComponent {
 
   confirmarExclusao() {
     if (this.colaboradorSelecionado) {
-      console.log('Excluído:', this.colaboradorSelecionado.nome);
+      this.sulworkService.deleteColaborador(this.colaboradorSelecionado.id).subscribe({
+        next: (res) => {
+          this.toastr.success("Colaborador deletado com sucesso!");
+          this.pessoas = this.pessoas.filter(
+            p => p.id !== this.colaboradorSelecionado.id
+          );
+          this.fecharModal();
+        },
+        error: (err) => {
+          this.toastr.error(err.error.title);
+          console.error(err.error.title);
+        }
+      });
     }
-    this.fecharModal();
   }
 }

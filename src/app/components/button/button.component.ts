@@ -19,7 +19,7 @@ export class ButtonComponent {
   @Output() action = new EventEmitter<void>();
 
   get buttonClass(): string {
-    const base = 'text-white p-3 rounded flex gap-2 items-center transition-colors duration-200 select-none';
+    const base = 'w-full text-white p-3 rounded flex gap-2 items-center transition-colors duration-200 select-none';
 
     if (this.disabled) {
       return `${base} bg-gray-400 cursor-not-allowed ${this.extraClasses}`;
