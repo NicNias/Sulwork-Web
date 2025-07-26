@@ -33,8 +33,7 @@
     </li>
     <li>
       Construa e inicie os containers usando o Docker Compose:
-      <code>docker build -t sulwork-app .</code>
-      ou qualquer outro nome para o build
+      <code>docker-compose up -d</code>
     </li>
     <li>
       Acesse o Swagger pela URL:
