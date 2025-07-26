@@ -67,6 +67,7 @@ export class CadastroComponent implements OnInit {
         }, 1500);
       },
       error: (err) => {
+        this.toastr.error(err.error.detail);
         console.error(err.error.title);
       }
     });
