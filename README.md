@@ -36,12 +36,7 @@
       <code>docker-compose up -d</code>
     </li>
     <li>
-      Acesse o Swagger pela URL:
-      <code>http://localhost:4200/</code>
-      <br />
-      <strong>Observação:</strong> Se estiver executando a aplicação via <code>Docker</code>, use a porta <code>4201</code>. 
-      Caso esteja rodando localmente (sem Docker), utilize a porta <code>4200</code>:
-      <br />
+      Acesse o sistema pela URL:
       <code>http://localhost:4200/</code>
     </li>
   </ol>
