@@ -25,7 +25,7 @@
   <img width="1359" height="642" alt="image" src="https://github.com/user-attachments/assets/26b4714d-5abf-4f03-a517-659d101fa12e" />
   <img width="1356" height="642" alt="image" src="https://github.com/user-attachments/assets/4ed8217c-4f06-4aa3-9760-8a73a6554e3f" />
 
-  <h3>Tutorial Front-end:</h3>
+  <h3>Tutorial Front-end (com o Docker):</h3>
   <ol>
     <li>
       Execute o comando:
@@ -34,6 +34,28 @@
     <li>
       Construa e inicie os containers usando o Docker Compose:
       <code>docker-compose up -d</code>
+    </li>
+    <li>
+      Acesse o sistema pela URL:
+      <code>http://localhost:4200/</code>
+    </li>
+  </ol>
+
+  <h3>Tutorial Front-end (sem o Docker):</h3>
+  <ol>
+    <li>
+      Execute o comando:
+      <code>git clone https://github.com/NicNias/Sulwork-Web.git</code>
+    </li>
+    <li>
+      Execute no terminal:
+      <code>yarn</code>
+      ou
+      <code>npm install</code>
+    </li>
+    <li>
+      Execute no terminal:
+      <code>ng serve</code>
     </li>
     <li>
       Acesse o sistema pela URL:
