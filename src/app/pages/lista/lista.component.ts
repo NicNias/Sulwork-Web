@@ -116,6 +116,7 @@ export class ListaComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao editar colaborador', err);
+        this.toastr.error(err.error.detail)
       }
     });
   }

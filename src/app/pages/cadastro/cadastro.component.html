@@ -1,8 +1,8 @@
 <main class="p-4 min-h-screen space-y-6 flex flex-col items-center">
-    <div class="flex justify-between items-center py-3 w-full">
-        <div class="flex justify-center items-center space-x-4">
+    <div class="flex max-lg:flex-col max-md:gap-3 justify-between items-center py-3 max-md:py-0 w-full">
+        <div class="flex max-md:flex-col justify-center items-center space-x-4">
             <img src="/logo.png" alt="Logo" class="w-16 h-16 rounded-full object-cover">
-            <h1 class="text-3xl font-bold">Cadastro de Colaboradores</h1>
+            <h1 class="text-3xl font-bold max-sm:text-2xl">Cadastro de Colaboradores</h1>
         </div>
 
         <app-button label="Lista de Colaboradores" icon="list-todo" color="green"
@@ -10,7 +10,7 @@
     </div>
 
     <form [formGroup]="colaboradorForm" (ngSubmit)="onSubmit()"
-        class="space-y-4 w-[50rem] flex flex-col justify-center bg-gray-800 p-5 rounded-2xl">
+        class="space-y-4 w-[50rem] max-lg:w-full flex flex-col justify-center bg-gray-800 p-5 rounded-2xl">
         <div class="flex flex-col gap-2 w-full justify-center">
             <div>
                 <label class="block font-semibold">Nome</label>
